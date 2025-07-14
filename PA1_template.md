@@ -7,7 +7,8 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r load-data, echo=TRUE}
+
+``` r
 # Unzip the file only if 'activity.csv' does not already exist
 if (!file.exists("activity.csv")) {
   unzip("activity.zip")
@@ -18,14 +19,23 @@ activity <- read.csv("activity.csv")
 
 # Display the structure of the data frame to understand variable types and data preview
 str(activity)
+```
 
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : chr  "2012-10-01" "2012-10-01" "2012-10-01" "2012-10-01" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+```
+
+``` r
 # Convert the 'date' column to Date class for easier date operations
 activity$date <- as.Date(activity$date, format = "%Y-%m-%d")
-
 ```
 
 ## What is mean total number of steps taken per day?
-```{r steps-per-day, echo=TRUE}
+
+``` r
 # Calculate total steps per day (ignoring missing values)
 steps_per_day <- tapply(activity$steps, activity$date, sum, na.rm = TRUE)
 
@@ -35,18 +45,33 @@ hist(steps_per_day,
      xlab = "Total Steps per Day",
      col = "grey",
      breaks = 20)
+```
 
+![](PA1_template_files/figure-html/steps-per-day-1.png)<!-- -->
+
+``` r
 # Calculate and print the mean and median total steps per day
 mean_steps <- mean(steps_per_day)
 median_steps <- median(steps_per_day)
 
 mean_steps
-median_steps
+```
 
+```
+## [1] 9354.23
+```
+
+``` r
+median_steps
+```
+
+```
+## [1] 10395
 ```
 
 ## What is the average daily activity pattern?
-```{r avg-daily-pattern-area, echo=TRUE}
+
+``` r
 # Calculate average steps per 5-minute interval across all days
 avg_steps_interval <- tapply(activity$steps, activity$interval, mean, na.rm = TRUE)
 
@@ -58,15 +83,23 @@ plot(intervals, avg_steps_interval, type = "l",
      ylab = "Average Number of Steps",
      main = "Average Daily Activity Pattern",
      col = "blue")
-
 ```
 
+![](PA1_template_files/figure-html/avg-daily-pattern-area-1.png)<!-- -->
+
 ## Imputing missing values
-```{r imputing-missing-values, echo=TRUE}
+
+``` r
 # 1. Calculate the total number of missing values (NAs) in the dataset
 total_na <- sum(is.na(activity$steps))
 total_na  # Display total missing values
+```
 
+```
+## [1] 2304
+```
+
+``` r
 # 2. Calculate the mean number of steps for each 5-minute interval (ignoring NAs)
 avg_steps_interval <- tapply(activity$steps, activity$interval, mean, na.rm = TRUE)
 
@@ -87,18 +120,33 @@ hist(steps_per_day_imputed,
      xlab = "Total Steps per Day",
      col = "grey",
      breaks = 20)
+```
 
+![](PA1_template_files/figure-html/imputing-missing-values-1.png)<!-- -->
+
+``` r
 # 5. Calculate mean and median total steps per day after imputing missing data
 mean_imputed <- mean(steps_per_day_imputed)
 median_imputed <- median(steps_per_day_imputed)
 
 mean_imputed  # Display mean after imputation
-median_imputed  # Display median after imputation
+```
 
+```
+## [1] 10766.19
+```
+
+``` r
+median_imputed  # Display median after imputation
+```
+
+```
+## [1] 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r weekday-weekend-area-plot, echo=TRUE}
+
+``` r
 # 1. Create a new factor variable for weekday/weekend
 activity_imputed$day_type <- ifelse(weekdays(activity_imputed$date) %in% c("Saturday", "Sunday"),
                                    "weekend", "weekday")
@@ -129,5 +177,6 @@ plot(weekend_data$interval, weekend_data$steps, type = "l",
      xlab = "5-minute Interval",
      ylab = "Average Number of Steps",
      col = "blue")
-
 ```
+
+![](PA1_template_files/figure-html/weekday-weekend-area-plot-1.png)<!-- -->
